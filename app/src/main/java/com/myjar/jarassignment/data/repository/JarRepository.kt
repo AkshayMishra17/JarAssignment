@@ -13,6 +13,12 @@ class JarRepositoryImpl(
     private val apiService: ApiService
 ) : JarRepository {
     override suspend fun fetchResults(): Flow<List<ComputerItem>> = flow {
-        apiService.fetchResults()
+//        apiService.fetchResults()
+        try{
+            val results = apiService.fetchResults()
+            emit(results)
+        }catch(e:Exception){
+            println("${e.message}")
+        }
     }
 }

@@ -8,6 +8,7 @@ import com.myjar.jarassignment.data.repository.JarRepository
 import com.myjar.jarassignment.data.repository.JarRepositoryImpl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 class JarViewModel : ViewModel() {
@@ -17,10 +18,16 @@ class JarViewModel : ViewModel() {
         get() = _listStringData
 
     private val repository: JarRepository = JarRepositoryImpl(createRetrofit())
-
+init{
+    fetchData()
+}
     fun fetchData() {
         viewModelScope.launch {
             repository.fetchResults()
+                .catch{e -> println("Error: ${e.message}")}
+                .collect {results ->
+                    _listStringData.value = results
+                }
         }
     }
 }
